@@ -1,0 +1,16 @@
+:root[thundercards-full-banner] #navigation-toolbox {
+  background-image: url("ember-banner-logo.png"), url("ember-banner-texture.png") !important;
+  background-size: auto 92%, 100% 100% !important;
+  background-position: right clamp(80px, 7vw, 160px) center, center !important;
+  background-repeat: no-repeat !important;
+}
+:root[thundercards-full-banner] .tabmail-tab .tab-background[selected] {
+  background-image: linear-gradient(#ffffff28, #ffffff28) !important;
+}
+@media (max-width: 700px) {
+  :root[thundercards-full-banner] #navigation-toolbox {
+    background-image: url("ember-banner-texture.png") !important;
+    background-size: 100% 100% !important;
+    background-position: center !important;
+  }
+}

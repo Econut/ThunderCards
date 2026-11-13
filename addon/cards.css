@@ -1,0 +1,190 @@
+#threadTree[rows="thread-card"].unified-inbox-sender-sizing tr[is="thread-card"] {
+    height: 117px !important;
+    min-height: 117px !important;
+}
+
+#threadTree[rows="thread-card"].unified-inbox-sender-sizing tr[is="thread-card"] .card-container {
+    background-color: #242a34 !important;
+    border: 1px solid #414b59 !important;
+    border-radius: 10px !important;
+
+    margin: 4px 7px !important;
+    padding: 12px 10px !important;
+
+    min-height: 105px !important;
+    height: auto !important;
+
+    box-sizing: border-box !important;
+    overflow: visible !important;
+
+    font-size: 15px !important;
+    line-height: 1.4 !important;
+
+    transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease,
+        box-shadow 0.15s ease !important;
+}
+
+#threadTree[rows="thread-card"].unified-inbox-sender-sizing tr[is="thread-card"][data-properties~="unread"]
+.card-container,
+
+#threadTree[rows="thread-card"].unified-inbox-sender-sizing tr[is="thread-card"][data-properties~="hasUnread"]
+.card-container {
+    background-color: #1c2b3e !important;
+    border: 2px solid #339dff !important;
+
+    box-shadow:
+        0 0 5px rgba(51, 157, 255, 0.18)
+        !important;
+}
+
+#threadTree[rows="thread-card"].unified-inbox-sender-sizing tr[is="thread-card"]:hover:not(.selected)
+.card-container {
+    background-color: #303b4b !important;
+    border-color: #69b4ff !important;
+}
+
+#threadTree[rows="thread-card"].unified-inbox-sender-sizing tr[is="thread-card"].selected .card-container {
+    background-color: #302a40 !important;
+    border: 2px solid #a78bfa !important;
+
+    box-shadow:
+        0 0 6px rgba(167, 139, 250, 0.20)
+        !important;
+}
+
+#threadTree[rows="thread-card"].unified-inbox-sender-sizing tr[is="thread-card"].selected:hover
+.card-container {
+    background-color: #3b3250 !important;
+    border-color: #c4b5fd !important;
+}
+
+#threadTree[rows="thread-card"].unified-inbox-sender-sizing tr[is="thread-card"] .sender {
+    font-size: 15px !important;
+    line-height: 1.4 !important;
+
+    white-space: normal !important;
+    overflow-wrap: anywhere !important;
+}
+
+#threadTree[rows="thread-card"].unified-inbox-sender-sizing tr[is="thread-card"] .subject {
+    font-size: 14px !important;
+    line-height: 1.4 !important;
+}
+
+#threadTree[rows="thread-card"].unified-inbox-sender-sizing tr[is="thread-card"] .date {
+    font-size: 12px !important;
+}
+
+#threadTree[rows="thread-card"].unified-inbox-sender-sizing tr[is="thread-card"] .tag-icon,
+#threadTree[rows="thread-card"].unified-inbox-sender-sizing tr[is="thread-card"] .tag-indicator,
+#threadTree[rows="thread-card"].unified-inbox-sender-sizing tr[is="thread-card"] .tag-color {
+    display: none !important;
+}
+
+#threadTree[rows="thread-card"].unified-inbox-sender-sizing tr[is="thread-card"] .thread-card-folder-indicator,
+#threadTree[rows="thread-card"].unified-inbox-sender-sizing tr[is="thread-card"] .folder-color-indicator,
+#threadTree[rows="thread-card"].unified-inbox-sender-sizing tr[is="thread-card"] .folder-indicator {
+    display: none !important;
+}
+
+#threadTree[rows="thread-card"].unified-inbox-sender-sizing tr[is="thread-card"] .account-indicator {
+    display: none !important;
+}
+
+  #threadTree[rows="thread-card"].unified-inbox-sender-sizing tr[is="thread-card"] .sender {
+    min-inline-size: 0;
+    white-space: nowrap !important;
+  }
+  #threadTree[rows="thread-card"].unified-inbox-sender-sizing tr[is="thread-card"] .card-container {
+    padding-block: 1px !important;
+  }
+  #threadTree[rows="thread-card"].unified-inbox-sender-sizing tr[is="thread-card"] > td {
+    padding-block: 2px !important;
+  }
+  #threadTree[rows="thread-card"].unified-inbox-sender-sizing tr[is="thread-card"] .twisty {
+    line-height: 1.2 !important;
+  }
+  #threadTree[rows="thread-card"].unified-inbox-sender-sizing tr[is="thread-card"] .thread-card-column {
+    min-inline-size: 0;
+    padding-block: 1px !important;
+    gap: 2px !important;
+  }
+  #threadTree[rows="thread-card"].unified-inbox-sender-sizing tr[is="thread-card"] .thread-card-dynamic-row {
+    row-gap: 2px !important;
+  }
+#threadTree[rows="thread-card"].unified-inbox-sender-sizing tr[is="thread-card"] .sender > .unified-inbox-sender-part {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+#threadTree[rows="thread-card"].unified-inbox-sender-sizing tr[is="thread-card"] .sender > .unified-inbox-sender-address {
+    font-weight: 400;
+  }
+
+#threadTree[rows="thread-card"].unified-inbox-sender-sizing .cards-account-badge {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  inline-size: 24px;
+  block-size: 18px;
+  border-radius: 4px;
+  background: var(--account-badge-background);
+  color: var(--account-badge-text, #fff);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+
+
+#threadTree[rows="thread-card"].unified-inbox-sender-sizing .cards-quick-delete {
+  flex: 0 0 16px;
+  min-inline-size: 16px;
+  inline-size: 16px;
+  block-size: 16px;
+  padding: 0;
+  border: 0;
+  display: inline-grid;
+  place-items: center;
+  background: transparent;
+  color: #a5adb8 !important;
+  opacity: 0.9;
+}
+
+#threadTree[rows="thread-card"].unified-inbox-sender-sizing .cards-quick-delete:hover:enabled {
+  color: #ff6874 !important;
+  opacity: 1;
+}
+
+#threadTree[rows="thread-card"].unified-inbox-sender-sizing .cards-quick-delete:disabled {
+  opacity: 0.55;
+}
+
+#threadTree[rows="thread-card"].unified-inbox-sender-sizing .cards-quick-delete[hidden] {
+  display: none;
+}
+
+
+
+
+
+#folderTree .folder-account-icon-replaced {
+  display: none !important;
+}
+#folderTree .folder-account-badge {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  inline-size: 22px;
+  block-size: 14px;
+  border-radius: 4px;
+  background: var(--account-badge-background);
+  color: var(--account-badge-text);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  align-self: center;
+}

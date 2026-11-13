@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>ThunderCards account badges</title>
+<link rel="stylesheet" href="options.css">
+<script src="options.js" defer></script>
+<main>
+  <h1>ThunderCards settings</h1>
+  <label class="checkbox"><input id="ember" type="checkbox" disabled> Enable EMBER Theme</label>
+  <p id="theme-status" role="status"></p>
+  <h2>Account badges</h2>
+  <form>
+    <label>Account <select id="account" required></select></label>
+    <label>Two-letter label <input id="label" maxlength="2" pattern="[A-Za-z]{2}"></label>
+    <label>Badge colour <input id="color" type="color"></label>
+    <label class="checkbox"><input id="automatic" type="checkbox"> Use Thunderbird account colour or automatic fallback</label>
+    <div><button type="submit">Save badge</button> <button type="button" id="reset">Reset to automatic</button></div>
+    <p id="status" role="status"></p>
+  </form>
+</main>
+</html>
+

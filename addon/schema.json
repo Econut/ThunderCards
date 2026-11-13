@@ -1,0 +1,12 @@
+[{"namespace":"senderLines","functions":[
+  {"name":"setFullBanner","type":"function","async":true,"parameters":[{"name":"enabled","type":"boolean"}]},
+  {"name":"restoreUnderlyingTheme","type":"function","async":true,"parameters":[]},
+  {"name":"listBadges","type":"function","async":true,"parameters":[]},
+  {"name":"saveBadge","type":"function","async":true,"parameters":[
+    {"name":"accountId","type":"string"},{"name":"label","type":"string"},{"name":"color","type":"string"}
+  ]}
+]}]
+
+
+
+
