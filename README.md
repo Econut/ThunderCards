@@ -1,6 +1,12 @@
-# ThunderCards
+<p align="center">
+  <img src="addon/thundercards-logo.png" alt="ThunderCards" width="600">
+</p>
 
 A modern, customisable Cards View and dark theme for Mozilla Thunderbird.
+
+**Compatibility:** Thunderbird 160.x · Tested on Windows with Thunderbird 160.0
+
+**Features:** Customisable account badges · Optional dark theme
 
 [Download ThunderCards 1.7.19](https://github.com/Econut/ThunderCards/releases/tag/v1.7.19) · [Report an issue](https://github.com/Econut/ThunderCards/issues)
 
@@ -56,12 +62,42 @@ The right edge of each card shows the date, Quick Delete and the native three-do
 1. Download the XPI from the [1.7.19 release](https://github.com/Econut/ThunderCards/releases/tag/v1.7.19).
 2. In Thunderbird 160.x, open **Add-ons and Themes → Extensions**.
 3. Open the gear menu, choose **Install Add-on From File**, and select the downloaded XPI.
-4. Select **Cards View** in the message list.
+4. Confirm **Add** when prompted. In the mail tab, open **Message list display options** and select **Cards View**.
 
 The add-on keeps its existing ID for upgrades and bundles its own styles. It uses a Thunderbird Experiment restricted to Thunderbird 160.x.
+
+## Privacy
+
+ThunderCards processes message and account information locally in Thunderbird to display senders, account badges and message selection. It does not upload email content or collect telemetry or analytics. The add-on makes no background requests to external servers. If you click either GitHub link in About, it asks Thunderbird to open that page in your default browser. Thunderbird continues to handle ordinary mail and account connections.
+
+ThunderCards stores the theme toggle in local extension storage. The Thunderbird profile stores the account badge initials and colour overrides, automatically assigned initials and the startup restore toggle. When startup restoration is enabled, it also stores the last selected message’s account/server key, folder and view URIs, message key and Message-ID. Disabling startup restoration clears the saved message reference.
+
+## Known limitations
+
+ThunderCards uses a privileged Thunderbird Experiment to integrate with the folder pane, message cards, and reading pane. It relies on internal Thunderbird APIs that can change, so the manifest restricts installation to Thunderbird 160.x. Windows with Thunderbird 160.0 is the tested environment. macOS, Linux, and other Thunderbird releases are untested.
+
+Startup restoration is limited to eligible read messages in the main mail tab with the reading pane visible. Messages that moved, were deleted or are unavailable are skipped.
+
+## Release verification
+
+| Check | Status |
+| --- | --- |
+| GitHub 1.7.19 XPI | Verified that the published asset's SHA-256 matches the local XPI and that the packaged manifest version matches the release tag. |
+| README screenshots | Verified that all six published images match the local PNG files and that those files decode. GitHub's rendering of this draft has yet to be checked. |
+| Install and rollback | Verified first installation of 1.7.19 and rollback to 1.7.18 via Thunderbird's Add-on Manager API in a disposable Windows profile running Thunderbird 160.0. |
+| Upgrade settings | Verified that the tested account badge configuration and startup restore preference survived upgrading from 1.7.18 to 1.7.19. Verified that both the off and on theme settings survived the upgrade. With the theme enabled, the saved setting, logo and header background were also verified after a full Thunderbird restart. |
+| Manual menus | Walked through Add-ons and Themes → Extensions → Install Add-on From File, confirmed the 1.7.19 XPI was added, and selected Cards View in the message-list menu. The manual install was over an existing copy. First installation and rollback were verified through the Add-on Manager API. |
 
 ## Build and rollback
 
 Run `./build.ps1` from the repository root in PowerShell to package `addon/` into a versioned XPI in `dist/`.
 
-To remove the header theme, turn off **Enable ThunderCards Theme**. To restore Thunderbird's native cards and folder styles, disable ThunderCards in **Add-ons and Themes → Extensions**. To roll back to an earlier build, install its XPI using **Install Add-on From File**.
+To remove the header theme, turn off **Enable ThunderCards Theme**. To restore Thunderbird's native cards and folder styles, disable ThunderCards in **Add-ons and Themes → Extensions**. To roll back, install a previous compatible XPI from Releases using **Install Add-on From File**. If Thunderbird rejects the downgrade, disable the current version to restore the native interface.
+
+## Licence
+
+ThunderCards source code is licensed under the [Mozilla Public License 2.0](LICENSE). The ThunderCards logo, icon and header background are covered by the separate [artwork notice](ARTWORK-NOTICE.md).
+
+This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+
+This notice applies to the JavaScript, CSS, HTML and JSON source in `addon/`, and to `build.ps1`.
