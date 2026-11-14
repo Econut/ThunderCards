@@ -1,22 +1,49 @@
 <!doctype html>
 <html lang="en">
 <meta charset="utf-8">
-<title>ThunderCards account badges</title>
+<title>ThunderCards settings</title>
 <link rel="stylesheet" href="options.css">
 <script src="options.js" defer></script>
 <main>
-  <h1>ThunderCards settings</h1>
-  <label class="checkbox"><input id="ember" type="checkbox" disabled> Enable EMBER Theme</label>
+  <header><img src="thundercards-icon.svg" alt="" width="36" height="36"><h1>ThunderCards settings</h1></header>
+  <section aria-labelledby="appearance-title">
+  <h2 id="appearance-title">Appearance</h2>
+  <label class="checkbox"><input id="theme-enabled" type="checkbox" disabled> Enable ThunderCards Theme</label>
   <p id="theme-status" role="status"></p>
-  <h2>Account badges</h2>
+  </section>
+  <section aria-labelledby="startup-title">
+  <h2 id="startup-title">Startup</h2>
+  <label class="checkbox"><input id="restore-email" type="checkbox" disabled> Restore Last Email on Startup</label>
+  <p>Reopens the last selected read email in the main mail tab when the reading pane is visible.</p>
+  <p id="restore-status" role="status"></p>
+  </section>
+  <section aria-labelledby="badges-title">
+  <h2 id="badges-title">Account badges</h2>
   <form>
     <label>Account <select id="account" required></select></label>
     <label>Two-letter label <input id="label" maxlength="2" pattern="[A-Za-z]{2}"></label>
     <label>Badge colour <input id="color" type="color"></label>
     <label class="checkbox"><input id="automatic" type="checkbox"> Use Thunderbird account colour or automatic fallback</label>
+    <div class="preview">Badge preview <output id="badge-preview" aria-label="Badge preview" for="account label color automatic"></output></div>
     <div><button type="submit">Save badge</button> <button type="button" id="reset">Reset to automatic</button></div>
     <p id="status" role="status"></p>
   </form>
+  </section>
+  <section aria-labelledby="about-title">
+    <div class="about-heading">
+      <img src="thundercards-icon.svg" alt="" width="36" height="36">
+      <div>
+        <h2 id="about-title">About ThunderCards</h2>
+        <p id="about-version"></p>
+      </div>
+    </div>
+    <p>A modern, customisable Cards View and dark theme for Mozilla Thunderbird.</p>
+    <div class="about-links">
+      <a id="github-repository">GitHub Repository</a>
+      <a id="github-issues">Report an Issue</a>
+    </div>
+    <p id="about-status" role="status"></p>
+  </section>
 </main>
 </html>
 

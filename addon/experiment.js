@@ -13,6 +13,78 @@ const { FolderTreeProperties } = ChromeUtils.importESModule(
   "resource:///modules/FolderTreeProperties.sys.mjs"
 );
 const BADGE_PREF = "extensions.thundercards.accountBadges";
+const RESTORE_EMAIL_PREF = "extensions.thundercards.restoreLastEmail";
+const LAST_EMAIL_PREF = "extensions.thundercards.lastEmail";
+
+function rememberEmail(window, tabmail, pane) {
+  const selected = () => {
+    if (!Services.prefs.getBoolPref(RESTORE_EMAIL_PREF, false) ||
+        tabmail.currentTabInfo?.chromeBrowser?.contentWindow !== pane ||
+        Services.wm.getMostRecentWindow("mail:3pane") !== window ||
+        !pane.gFolder || pane.gDBView?.numSelected !== 1) {
+      return;
+    }
+    const header = pane.gDBView.hdrForFirstSelectedMessage;
+    if (!header?.folder || !header.messageId) return;
+    Services.prefs.setStringPref(LAST_EMAIL_PREF, JSON.stringify({
+      view: pane.gFolder.URI,
+      folder: header.folder.URI,
+      server: header.folder.server.key,
+      key: header.messageKey,
+      id: header.messageId,
+    }));
+  };
+  pane.threadTree.addEventListener("select", selected);
+  return () => pane.threadTree.removeEventListener("select", selected);
+}
+
+function restoreEmail(window, tabmail, saved) {
+  const tab = tabmail.currentTabInfo;
+  const pane = tab?.chromeBrowser?.contentWindow;
+  if (!tab?.first || !pane?.gFolder || !pane.gViewWrapper ||
+      pane.paneLayout.messagePaneSplitter.isCollapsed || pane.gDBView?.numSelected) {
+    return () => {};
+  }
+  const folder = MailServices.folderLookup.getFolderForURL(saved.folder);
+  const view = MailServices.folderLookup.getFolderForURL(saved.view);
+  const header = folder?.GetMessageHeader(saved.key);
+  if (!view || view.isServer || folder?.server.key !== saved.server ||
+      header?.messageId !== saved.id || !header.isRead) {
+    return () => {};
+  }
+  const stop = () => {
+    pane.removeEventListener("allMessagesLoaded", select);
+    window.removeEventListener("pointerdown", stop, true);
+    window.removeEventListener("keydown", stop, true);
+    tabmail.removeEventListener("TabSelect", stop);
+    pane.removeEventListener("folderURIChanged", stop);
+  };
+  const select = () => {
+    stop();
+    if (!Services.prefs.getBoolPref(RESTORE_EMAIL_PREF, false) ||
+        tabmail.currentTabInfo !== tab || pane.gFolder?.URI !== saved.view ||
+        pane.paneLayout.messagePaneSplitter.isCollapsed || pane.gDBView?.numSelected ||
+        !header.isRead) return;
+    const index = pane.gDBView?.findIndexOfMsgHdr(header, true);
+    if (index == null || index === 0xffffffff || index < 0) return;
+    pane.threadTree.selectedIndex = index;
+    pane.threadTree.scrollToIndex(index, true);
+  };
+  if (pane.gFolder.URI !== saved.view) pane.displayFolder(saved.view);
+  if (pane.gFolder?.URI !== saved.view || !pane.gViewWrapper) return stop;
+  const index = pane.gDBView?.findIndexOfMsgHdr(header, false);
+  if (!pane.gViewWrapper.searching &&
+      ((index >= 0 && index < 0xffffffff) || !pane.gViewWrapper.isFolderLoading())) {
+    select();
+  } else {
+    pane.addEventListener("allMessagesLoaded", select);
+    window.addEventListener("pointerdown", stop, true);
+    window.addEventListener("keydown", stop, true);
+    tabmail.addEventListener("TabSelect", stop);
+    pane.addEventListener("folderURIChanged", stop);
+  }
+  return stop;
+}
 const PALETTE = ["#2257a5", "#a25a1d", "#7041a8", "#216b48", "#8b365d", "#1e6575"];
 const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -42,13 +114,7 @@ function labelFor(name, used) {
 function paintBadge(badge, entry) {
   badge.textContent = entry.label;
   badge.title = entry.email || entry.name;
-  badge.style.setProperty("--account-badge-background", entry.color);
-  const rgb = entry.color.slice(1).match(/../g).map(pair => {
-    const channel = parseInt(pair, 16) / 255;
-    return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
-  });
-  const luminance = 0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2];
-  badge.style.setProperty("--account-badge-text", luminance > 0.179 ? "#111" : "#fff");
+  badge.style.setProperty("--account-badge-color", entry.color);
 }
 
 function isCombinedView(pane) {
@@ -448,6 +514,11 @@ this.senderLines = class extends ExtensionAPI {
       },
       restoreUnderlyingTheme: async () => this.restoreUnderlyingTheme(),
       listBadges: async () => [...this.badges.values()],
+      getRestoreEmail: async () => Services.prefs.getBoolPref(RESTORE_EMAIL_PREF, false),
+      setRestoreEmail: async enabled => {
+        Services.prefs.setBoolPref(RESTORE_EMAIL_PREF, enabled);
+        if (!enabled) Services.prefs.clearUserPref(LAST_EMAIL_PREF);
+      },
       saveBadge: async (id, label, color) => this.saveBadge(id, label, color),
     } };
   }
@@ -500,9 +571,10 @@ this.senderLines = class extends ExtensionAPI {
       const saved = this.nativeColorsReady && FolderTreeProperties.getColor(server.rootFolder.URI);
       const fallback = PALETTE[[...id].reduce((hash, ch) =>
         (hash * 31 + ch.charCodeAt(0)) >>> 0, 0) % PALETTE.length];
-      const color = config.color || (/^#[0-9a-f]{6}$/i.test(saved) ? saved : fallback);
+      const automaticColor = /^#[0-9a-f]{6}$/i.test(saved) ? saved : fallback;
+      const color = config.color || automaticColor;
       badges.set(id, { id, name, email, label: config.label || automatic,
-        color, labelOverride: config.label, colorOverride: config.color });
+        color, automaticColor, labelOverride: config.label, colorOverride: config.color });
       servers.set(server.key, id);
     }
     this.badges = badges;
@@ -526,6 +598,20 @@ this.senderLines = class extends ExtensionAPI {
 
   onStartup() {
     this.active = true;
+    this.startupEmailObserver = window => {
+      Services.obs.removeObserver(this.startupEmailObserver, "mail-idle-startup-tasks-finished");
+      this.startupEmailObserver = null;
+      if (!Services.prefs.getBoolPref(RESTORE_EMAIL_PREF, false)) return;
+      try {
+        const saved = JSON.parse(Services.prefs.getStringPref(LAST_EMAIL_PREF, "null"));
+        if (saved) {
+          this.stopEmailRestore = restoreEmail(window, window.document.getElementById("tabmail"), saved);
+        }
+      } catch {
+        // A saved folder or message database may be unavailable.
+      }
+    };
+    Services.obs.addObserver(this.startupEmailObserver, "mail-idle-startup-tasks-finished");
     this.panes = new Map();
     this.windows = new Map();
     try {
@@ -581,17 +667,44 @@ this.senderLines = class extends ExtensionAPI {
     }
   }
 
+  bannerControlObservers = new WeakMap();
+
   updateFullBanner(window) {
     const root = window.document.documentElement;
     const attribute = "thundercards-full-banner";
     const active = root.hasAttribute(attribute);
     if (active === Boolean(this.fullBanner)) return;
-    const sheet = this.extension.rootURI.resolve("ember-banner.css");
+    const sheet = this.extension.rootURI.resolve("thundercards-banner.css");
     const utils = window.windowUtils;
     if (this.fullBanner) {
       utils.loadSheetUsingURIString(sheet, utils.USER_SHEET);
       root.setAttribute(attribute, "");
+      const toolbox = window.document.getElementById("navigation-toolbox");
+      const controls = window.document.querySelectorAll(".titlebar-buttonbox, #window-controls");
+      if (toolbox && controls.length) {
+        const reserveControlSpace = () => {
+          const right = toolbox.getBoundingClientRect().right;
+          let inset = 0;
+          for (const control of controls) {
+            const bounds = control.getBoundingClientRect();
+            if (bounds.width && bounds.height && window.getComputedStyle(control).visibility === "visible") {
+              inset = Math.max(inset, right - bounds.left + 24);
+            }
+          }
+          toolbox.style.setProperty("--thundercards-control-clearance", `${Math.ceil(inset)}px`);
+        };
+        const observer = new window.ResizeObserver(reserveControlSpace);
+        observer.observe(toolbox);
+        for (const control of controls) observer.observe(control);
+        this.bannerControlObservers.set(window, () => {
+          observer.disconnect();
+          toolbox.style.removeProperty("--thundercards-control-clearance");
+        });
+        reserveControlSpace();
+      }
     } else {
+      this.bannerControlObservers.get(window)?.();
+      this.bannerControlObservers.delete(window);
       root.removeAttribute(attribute);
       utils.removeSheetUsingURIString(sheet, utils.USER_SHEET);
     }
@@ -667,6 +780,7 @@ this.senderLines = class extends ExtensionAPI {
 
     const getEntry = server => this.badges.get(this.servers.get(server?.key));
     const folderBadges = watchFolderBadges(pane, getEntry, id => this.openEditor(id));
+    const stopRemembering = rememberEmail(pane.top, pane.top.document.getElementById("tabmail"), pane);
     function fillRow(...args) {
       const result = original.apply(this, args);
       if (prototype.fillRow === fillRow) {
@@ -687,9 +801,10 @@ this.senderLines = class extends ExtensionAPI {
 
     const restoreDelete = useNextRowAfterDelete(pane);
     prototype.fillRow = fillRow;
-    const onUnload = () => { folderBadges.stop(); this.panes.delete(pane); };
+    const onUnload = () => { stopRemembering(); folderBadges.stop(); this.panes.delete(pane); };
     pane.addEventListener("unload", onUnload, { once: true });
     const detach = () => {
+      stopRemembering();
       folderBadges.stop();
       pane.removeEventListener("unload", onUnload);
       restoreDelete();
@@ -710,6 +825,10 @@ this.senderLines = class extends ExtensionAPI {
 
   onShutdown(isAppShutdown) {
     this.active = false;
+    if (this.startupEmailObserver) {
+      Services.obs.removeObserver(this.startupEmailObserver, "mail-idle-startup-tasks-finished");
+    }
+    this.stopEmailRestore?.();
     ExtensionSupport.unregisterWindowListener(this.extension.id);
     for (const topic of ["server-color-changed", "message-account-removed"]) {
       Services.obs.removeObserver(this.badgeObserver, topic);

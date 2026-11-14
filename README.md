@@ -1,55 +1,67 @@
 # ThunderCards
 
-ThunderCards customises Cards View in Mozilla Thunderbird 160.x. It combines dark message cards, account badges, quick deletion and the optional EMBER theme in one add-on.
+A modern, customisable Cards View and dark theme for Mozilla Thunderbird.
 
-![Unified Inbox with EMBER banner and account badges](screenshots/01-unified-inbox.png)
+[Download ThunderCards 1.7.19](https://github.com/Econut/ThunderCards/releases/tag/v1.7.19) · [Report an issue](https://github.com/Econut/ThunderCards/issues)
+
+![ThunderCards Unified Inbox with blue unread cards, a purple selected card, outlined account badges and the lightning banner](screenshots/01-unified-inbox.png)
+
+## What ThunderCards adds
+
+- **Cards View** puts the sender name, email address and subject on separate lines. Blue borders and green dots identify unread messages, grey borders identify read messages, and purple identifies the selection.
+- **Account badges** use editable initials and colours in Unified Folders, All Folders and combined message lists. ThunderCards detects supported accounts as you add them in Thunderbird.
+- **Quick Delete** adds a trash button beside the card menu where Thunderbird can safely move the message to Trash. After deleting a selected single message, ThunderCards prefers the next visible message, or the previous one at the end of the list.
+- **ThunderCards theme** adds the full-width blue and purple lightning header. The theme can be turned off in Settings.
+- **Restore Last Email on Startup** is optional and off by default. It restores the last selected read email in the main mail tab when the reading pane is visible. Unread and unavailable messages are skipped.
+
+## Settings and menus
+
+Click the **ThunderCards lightning icon** in the left Spaces toolbar to open Settings. You can also use **Add-ons and Themes → Extensions → ThunderCards → Preferences**. In the folder pane, right-click a supported account badge and choose **Edit account badge** to open its settings.
+
+| Section | Controls |
+| --- | --- |
+| Appearance | Enable or disable the ThunderCards theme. |
+| Startup | Turn last-email restoration on or off. |
+| Account badges | Select an account, edit its two-letter label and colour, preview the badge, then save or reset it. |
+| About ThunderCards | Check the installed version and open the GitHub repository or issue tracker in your default browser. |
+
+![ThunderCards settings showing the Spaces button, appearance and startup toggles, badge editor and About section](screenshots/05-theme-and-badge-settings.png)
+
+## More screenshots
+
+All screenshots are from a disposable Thunderbird profile with sample messages.
+
+### Unified Folders and All Folders
+
+Outlined badges identify accounts in the folder pane. Muted folder icons and unread counts keep the hierarchy easy to scan.
+
+![Folder pane showing both folder modes and outlined account badges](screenshots/06-folder-sidebar.png)
+
+### Message-card controls
+
+The right edge of each card shows the date, Quick Delete and the native three-dot menu. Stars and account badges sit below.
+
+![Close-up of message-card controls and account badges](screenshots/02-card-controls.png)
+
+### Individual Inbox and reading pane
+
+![Individual account inbox with an open email in the reading pane](screenshots/03-individual-inbox.png)
+
+### Threaded conversation
+
+![Threaded email selected in Unified Inbox](screenshots/04-threaded-conversation.png)
 
 ## Install or upgrade
 
-1. Download `ThunderCards-1.7.7.xpi` from [Releases](../../releases/tag/v1.7.7).
-2. In Thunderbird, open **Add-ons and Themes → Extensions**.
-3. From the gear menu, select **Install Add-on From File**, choose the XPI and accept the installation prompt.
+1. Download the XPI from the [1.7.19 release](https://github.com/Econut/ThunderCards/releases/tag/v1.7.19).
+2. In Thunderbird 160.x, open **Add-ons and Themes → Extensions**.
+3. Open the gear menu, choose **Install Add-on From File**, and select the downloaded XPI.
 4. Select **Cards View** in the message list.
 
-The XPI retains the existing ThunderCards add-on ID so it installs over earlier versions. The card styling is bundled and does not require `userChrome.css`. The add-on uses a Thunderbird Experiment and is restricted to Thunderbird 160.x.
+The add-on keeps its existing ID for upgrades and bundles its own styles. It uses a Thunderbird Experiment restricted to Thunderbird 160.x.
 
-## How it works
+## Build and rollback
 
-| Feature | What you'll see |
-| --- | --- |
-| Sender layout | Sender name, plain email address and subject on separate lines. Sent folders keep Thunderbird’s recipient display. |
-| Card states | Blue borders and green dots for unread messages, grey borders for read messages and purple styling for selection. The virtual list uses a 117 px row pitch. |
-| Account badges | Matching two-letter badges on account entries in the folder pane and on messages in combined views, including when a filter leaves results from a single account. Standard folder-type icons are retained. |
-| Quick delete | The trash button beside the three-dot menu uses Thunderbird’s delete command. The button is disabled when the add-on cannot safely use the account’s Trash behaviour. |
-| After deleting | For a selected single message, the add-on prefers the next visible message in the current list, or the previous message at the end. Thread and multiple-selection cases use Thunderbird’s native handling. |
-| EMBER theme | A dark palette, orange accents and a full-width EMBER banner. |
+Run `./build.ps1` from the repository root in PowerShell to package `addon/` into a versioned XPI in `dist/`.
 
-## Settings
-
-Open **Add-ons and Themes → Extensions → ThunderCards → Preferences**. You can also right-click a supported folder-pane account badge and choose **Edit account badge** to open settings for that account.
-
-To add a mail account, use Thunderbird’s **Account Settings → Account Actions → Add Mail Account**. ThunderCards detects supported accounts automatically and assigns each a badge. Reopen ThunderCards preferences to see newly added accounts in the account picker. Badge choices are stored in your Thunderbird profile using the account’s internal ID, and saved choices carry over when upgrading.
-
-- **Enable EMBER Theme** applies or removes the EMBER palette and banner. It is enabled by default.
-- Choose an **Account**, enter a **Two-letter label**, pick a **Badge colour** and click **Save badge**.
-- Select **Use Thunderbird account colour or automatic fallback** to let ThunderCards choose the colour. **Reset to automatic** clears the account’s custom badge settings.
-
-![ThunderCards theme and account badge settings](screenshots/05-theme-and-badge-settings.png)
-
-## Screenshots
-
-The screenshots use a disposable profile with sample messages.
-
-- [Unified Inbox and EMBER banner](screenshots/01-unified-inbox.png)
-- [Card states and quick-delete control](screenshots/02-card-states-and-controls.png)
-- [Individual Inbox](screenshots/03-individual-inbox.png)
-- [Threaded conversation](screenshots/04-threaded-conversation.png)
-- [Theme and badge settings](screenshots/05-theme-and-badge-settings.png)
-
-## Build from source
-
-On Windows with PowerShell, run `./build.ps1` from the repository root. The script packages the contents of `addon/` into a versioned XPI in `dist/`.
-
-## Roll back
-
-To remove just the EMBER palette and banner, clear **Enable EMBER Theme** in ThunderCards settings. To restore Thunderbird’s native cards and controls, disable ThunderCards in **Add-ons and Themes → Extensions**. Any styling supplied by your active theme or profile CSS still applies. To return to a previous ThunderCards version, install the earlier XPI from a local copy using **Install Add-on From File**.
+To remove the header theme, turn off **Enable ThunderCards Theme**. To restore Thunderbird's native cards and folder styles, disable ThunderCards in **Add-ons and Themes → Extensions**. To roll back to an earlier build, install its XPI using **Install Add-on From File**.

@@ -124,18 +124,33 @@
     font-weight: 400;
   }
 
-#threadTree[rows="thread-card"].unified-inbox-sender-sizing .cards-account-badge {
+#threadTree[rows="thread-card"].unified-inbox-sender-sizing .cards-account-badge,
+#folderTree .folder-account-badge {
+  --account-badge-width: 25px;
+  --account-badge-height: 16px;
+  --account-badge-font-size: 11px;
+  --account-badge-font-weight: 600;
+  --account-badge-border-width: 1.5px;
   display: inline-grid;
   place-items: center;
   flex: none;
-  inline-size: 24px;
-  block-size: 18px;
+  inline-size: var(--account-badge-width);
+  block-size: var(--account-badge-height);
   border-radius: 4px;
-  background: var(--account-badge-background);
-  color: var(--account-badge-text, #fff);
-  font-size: 11px;
-  font-weight: 700;
+  box-sizing: border-box;
+  border: var(--account-badge-border-width) solid currentColor;
+  background: transparent;
+  color: var(--account-badge-color);
+  font-size: var(--account-badge-font-size);
+  font-weight: var(--account-badge-font-weight);
   line-height: 1;
+}
+
+#threadTree[rows="thread-card"].unified-inbox-sender-sizing .cards-account-badge {
+  --account-badge-width: 28px;
+  --account-badge-height: 18px;
+  --account-badge-font-size: 12px;
+  --account-badge-font-weight: 700;
 }
 
 
@@ -171,20 +186,21 @@
 
 
 
-#folderTree .folder-account-icon-replaced {
+#folderTree .folder-account-icon-replaced,
+#folderTree li[is="folder-tree-row"] > .container:has(> .folder-account-badge) > .icon {
   display: none !important;
 }
+#folderTree > [data-mode]:is([data-mode="smart"], [data-mode="all"])
+  li[is="folder-tree-row"].new-messages > .container > .name {
+  color: inherit !important;
+}
+@media not (forced-colors: active) {
+  #folderTree > :is([data-mode="smart"], [data-mode="all"])
+    li[is="folder-tree-row"]:not(.tls-error, [data-has-error="true"], [data-is-paused="true"], [data-is-busy="true"])
+    > .container > .icon {
+    --icon-color: light-dark(#68727e, #aab4c2) !important;
+  }
+}
 #folderTree .folder-account-badge {
-  display: inline-grid;
-  place-items: center;
-  flex: none;
-  inline-size: 22px;
-  block-size: 14px;
-  border-radius: 4px;
-  background: var(--account-badge-background);
-  color: var(--account-badge-text);
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 1;
   align-self: center;
 }

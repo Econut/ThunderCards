@@ -5,3 +5,34 @@ form { gap: 1rem; }
 label.checkbox { display: flex; align-items: center; }
 input, select, button { font: inherit; }
 #label { width: 5ch; }
+header { display: flex; align-items: center; gap: .75rem; margin-block-end: 1.25rem; }
+h1 { margin: 0; }
+h2 { margin: 0 0 1rem; font-size: 1.15rem; }
+section {
+  margin-block: 1rem;
+  padding: 1.15rem;
+  border: 1px solid color-mix(in srgb, currentColor 22%, transparent);
+  border-radius: 10px;
+  background: color-mix(in srgb, currentColor 4%, transparent);
+}
+p { margin-block: .5rem 0; }
+[role="status"]:empty { margin: 0; }
+.preview { display: flex; align-items: center; gap: .75rem; }
+#badge-preview {
+  box-sizing: border-box;
+  display: inline-grid;
+  place-items: center;
+  inline-size: 28px;
+  block-size: 18px;
+  border: 1.5px solid currentColor;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+}
+#badge-preview:empty { visibility: hidden; }
+.about-heading, .about-links { display: flex; align-items: center; gap: .75rem; }
+.about-heading h2, #about-version { margin: 0; }
+#about-version { opacity: .8; }
+.about-links { flex-wrap: wrap; margin-block-start: 1rem; }
+.about-links a { color: light-dark(#204ba7, #8fcaff); }
+.about-links a + a { color: light-dark(#6136a4, #c2a5ff); }

@@ -1,5 +1,5 @@
 const palette = {
-  colors: { frame: "#000000", tab_background_text: "#ffffff" },
+  colors: { frame: "#080e19", tab_background_text: "#ffffff" },
 };
 
 const themed = new Set();
