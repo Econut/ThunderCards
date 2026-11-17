@@ -1,0 +1,16 @@
+{
+  "addons": {
+    "unified-inbox-sender-lines@local.invalid": {
+      "updates": [
+        {
+          "version": "1.7.23",
+          "update_link": "https://github.com/Econut/ThunderCards/releases/download/v1.7.23/ThunderCards-1.7.23.xpi",
+          "update_hash": "sha256:28989e9af46d90000a22ecc13ac73e462c526c67d8fda01750b64ec6225a5a58",
+          "applications": {
+            "gecko": { "strict_min_version": "160.0", "strict_max_version": "160.*" }
+          }
+        }
+      ]
+    }
+  }
+}

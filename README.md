@@ -8,7 +8,7 @@ A modern, customisable Cards View and dark theme for Mozilla Thunderbird.
 
 **Features:** Customisable account badges · Optional dark theme
 
-[Download ThunderCards 1.7.22](https://github.com/Econut/ThunderCards/releases/tag/v1.7.22) · [Report an issue](https://github.com/Econut/ThunderCards/issues)
+[Download ThunderCards 1.7.23](https://github.com/Econut/ThunderCards/releases/tag/v1.7.23) · [Report an issue](https://github.com/Econut/ThunderCards/issues)
 
 ![ThunderCards Unified Inbox with blue unread cards, a purple selected card, outlined account badges and the lightning banner](screenshots/01-unified-inbox.png)
 
@@ -59,16 +59,20 @@ The right edge of each card shows the date, Quick Delete and the native three-do
 
 ## Install or upgrade
 
-1. Download the XPI from the [1.7.22 release](https://github.com/Econut/ThunderCards/releases/tag/v1.7.22).
+1. Download the XPI from the [1.7.23 release](https://github.com/Econut/ThunderCards/releases/tag/v1.7.23).
 2. In Thunderbird 160.x, open **Add-ons and Themes → Extensions**.
 3. Open the gear menu, choose **Install Add-on From File**, and select the downloaded XPI.
 4. Confirm **Add** when prompted. In the mail tab, open **Message list display options** and select **Cards View**.
 
 The add-on keeps its existing ID for upgrades and bundles its own styles. It uses a Thunderbird Experiment restricted to Thunderbird 160.x.
 
+## Automatic updates
+
+Install 1.7.23 once using the XPI. Thunderbird checks the GitHub update feed for subsequent versions and installs them according to its add-on update settings. Keep automatic updates enabled in Add-ons Manager to receive them automatically.
+
 ## Privacy
 
-ThunderCards processes message and account information locally in Thunderbird to display senders, account badges and message selection. It does not upload email content or collect telemetry or analytics. The add-on makes no background requests to external servers. If you click either GitHub link in About, it asks Thunderbird to open that page in your default browser. Thunderbird continues to handle ordinary mail and account connections.
+ThunderCards processes message and account information locally in Thunderbird to display senders, account badges and message selection. It does not upload email content or collect telemetry or analytics. Thunderbird checks the GitHub-hosted update feed and downloads new XPIs when add-on updates are enabled. ThunderCards makes no other background requests to external servers. If you click either GitHub link in About, it asks Thunderbird to open that page in your default browser. Thunderbird continues to handle ordinary mail and account connections.
 
 ThunderCards stores the theme toggle in local extension storage. The Thunderbird profile stores the account badge initials and colour overrides, automatically assigned initials and the startup restore toggle. When startup restoration is enabled, it also stores the last selected message’s account/server key, folder and view URIs, message key and Message-ID. Disabling startup restoration clears the saved message reference.
 
@@ -91,6 +95,8 @@ Startup restoration is limited to eligible read messages in the main mail tab wi
 ## Build and rollback
 
 Run `./build.ps1` from the repository root in PowerShell to package `addon/` into a versioned XPI in `dist/`.
+
+When publishing a new release, bump the manifest version, upload the versioned XPI to GitHub Releases, then update the version, asset URL and SHA-256 in `updates.json`. Publish the feed entry only after the asset is available.
 
 To remove the header theme, turn off **Enable ThunderCards Theme**. To restore Thunderbird's native cards and folder styles, disable ThunderCards in **Add-ons and Themes → Extensions**. To roll back, install a previous compatible XPI from Releases using **Install Add-on From File**. If Thunderbird rejects the downgrade, disable the current version to restore the native interface.
 
