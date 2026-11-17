@@ -510,6 +510,7 @@ this.senderLines = class extends ExtensionAPI {
     return { senderLines: {
       setFullBanner: async enabled => {
         this.fullBanner = enabled;
+        this.updateRemoteContentStyle(enabled);
         for (const window of this.windows.keys()) this.updateFullBanner(window);
       },
       restoreUnderlyingTheme: async () => this.restoreUnderlyingTheme(),
@@ -668,6 +669,89 @@ this.senderLines = class extends ExtensionAPI {
   }
 
   bannerControlObservers = new WeakMap();
+  searchAlignments = new WeakMap();
+
+  watchSearchAlignment(window) {
+    const { document } = window;
+    const toolbar = document.getElementById("unifiedToolbar");
+    const tabmail = document.getElementById("tabmail");
+    if (!toolbar || !tabmail) return () => {};
+    let search, paneBrowser, column, offset = 0, frame = 0;
+    const reset = () => {
+      search?.style.removeProperty("--thundercards-search-offset");
+      offset = 0;
+    };
+    const update = () => {
+      frame = 0;
+      if (!search || !column || column.ownerDocument.getElementById("threadTree")?.getAttribute("rows") !== "thread-card") {
+        reset();
+        return;
+      }
+      const bounds = search.getBoundingClientRect();
+      const pane = column.getBoundingClientRect();
+      const browser = paneBrowser.getBoundingClientRect();
+      const area = toolbar.getBoundingClientRect();
+      if (!bounds.width || !pane.width) return;
+      const left = bounds.left - offset;
+      const target = browser.left + pane.left + (pane.width - bounds.width) / 2;
+      offset = Math.max(area.left - left, Math.min(target - left, area.right - bounds.width - left));
+      search.style.setProperty("--thundercards-search-offset", `${offset}px`);
+    };
+    const schedule = () => {
+      if (!frame) frame = window.requestAnimationFrame(update);
+    };
+    const resize = new window.ResizeObserver(schedule);
+    const layout = new window.MutationObserver(schedule);
+    const bind = () => {
+      const next = toolbar.querySelector("global-search-bar");
+      const browser = tabmail.currentTabInfo?.chromeBrowser;
+      const threadPane = browser?.currentURI?.spec === PANE_URL &&
+        browser.contentDocument?.getElementById("threadPane");
+      if (next !== search || threadPane !== column || browser !== paneBrowser) {
+        reset();
+        search = next;
+        column = threadPane;
+        paneBrowser = browser;
+        resize.disconnect();
+        layout.disconnect();
+        resize.observe(toolbar);
+        if (search) resize.observe(search);
+        if (column) {
+          resize.observe(column);
+          resize.observe(paneBrowser);
+          layout.observe(column, { attributes: true, subtree: true, attributeFilter: ["rows"] });
+          const folders = column.ownerDocument.getElementById("folderPane");
+          if (folders) resize.observe(folders);
+        }
+      }
+      schedule();
+    };
+    const toolbarChanges = new window.MutationObserver(bind);
+    toolbarChanges.observe(toolbar, { childList: true, subtree: true });
+    tabmail.addEventListener("TabSelect", bind);
+    tabmail.addEventListener("DOMContentLoaded", bind, true);
+    window.addEventListener("resize", schedule);
+    bind();
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("resize", schedule);
+      tabmail.removeEventListener("TabSelect", bind);
+      tabmail.removeEventListener("DOMContentLoaded", bind, true);
+      toolbarChanges.disconnect();
+      layout.disconnect();
+      resize.disconnect();
+      reset();
+    };
+  }
+
+  updateRemoteContentStyle(enabled) {
+    const sheets = Cc["@mozilla.org/content/style-sheet-service;1"]
+      .getService(Ci.nsIStyleSheetService);
+    const uri = Services.io.newURI(this.extension.rootURI.resolve("remote-content.css"));
+    const registered = sheets.sheetRegistered(uri, sheets.USER_SHEET);
+    if (enabled && !registered) sheets.loadAndRegisterSheet(uri, sheets.USER_SHEET);
+    if (!enabled && registered) sheets.unregisterSheet(uri, sheets.USER_SHEET);
+  }
 
   updateFullBanner(window) {
     const root = window.document.documentElement;
@@ -679,6 +763,7 @@ this.senderLines = class extends ExtensionAPI {
     if (this.fullBanner) {
       utils.loadSheetUsingURIString(sheet, utils.USER_SHEET);
       root.setAttribute(attribute, "");
+      this.searchAlignments.set(window, this.watchSearchAlignment(window));
       const toolbox = window.document.getElementById("navigation-toolbox");
       const controls = window.document.querySelectorAll(".titlebar-buttonbox, #window-controls");
       if (toolbox && controls.length) {
@@ -703,6 +788,8 @@ this.senderLines = class extends ExtensionAPI {
         reserveControlSpace();
       }
     } else {
+      this.searchAlignments.get(window)?.();
+      this.searchAlignments.delete(window);
       this.bannerControlObservers.get(window)?.();
       this.bannerControlObservers.delete(window);
       root.removeAttribute(attribute);
@@ -737,6 +824,8 @@ this.senderLines = class extends ExtensionAPI {
   }
 
   unwatchWindow(window) {
+    this.searchAlignments.get(window)?.();
+    this.searchAlignments.delete(window);
     this.windows.get(window)?.();
     this.windows.delete(window);
   }
@@ -840,6 +929,7 @@ this.senderLines = class extends ExtensionAPI {
       return;
     }
     this.fullBanner = false;
+    this.updateRemoteContentStyle(false);
     const windows = [...this.windows.keys()];
     for (const window of windows) this.updateFullBanner(window);
     Promise.resolve().then(() => this.restoreUnderlyingTheme(windows));

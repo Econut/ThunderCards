@@ -6,6 +6,22 @@
   background-repeat: no-repeat !important;
 }
 
+:root[thundercards-full-banner] #unifiedToolbar global-search-bar {
+  max-inline-size: 32rem;
+  position: relative;
+  left: var(--thundercards-search-offset, 0px);
+}
+
+@media (forced-colors: none) and (prefers-contrast: no-preference) {
+  :root[thundercards-full-banner] #unifiedToolbar global-search-bar {
+    --search-bar-background: #141c29;
+    --search-bar-focus-background: #1b2738;
+    --search-bar-border-color: #3b4a60;
+    --search-bar-color: #e3eaf4;
+    --search-field-placeholder: #aab8cb;
+  }
+}
+
 :root[thundercards-full-banner] .tabmail-tab .tab-background[selected] {
   background-image: linear-gradient(#ffffff28, #ffffff28) !important;
 }

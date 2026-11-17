@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "ThunderCards",
-  "version": "1.7.19",
+  "version": "1.7.22",
   "homepage_url": "https://github.com/Econut/ThunderCards",
   "description": "Customizes Thunderbird Cards View with dark cards and separate sender name and address lines.",
   "browser_specific_settings": {

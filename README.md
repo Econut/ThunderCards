@@ -8,7 +8,7 @@ A modern, customisable Cards View and dark theme for Mozilla Thunderbird.
 
 **Features:** Customisable account badges · Optional dark theme
 
-[Download ThunderCards 1.7.19](https://github.com/Econut/ThunderCards/releases/tag/v1.7.19) · [Report an issue](https://github.com/Econut/ThunderCards/issues)
+[Download ThunderCards 1.7.22](https://github.com/Econut/ThunderCards/releases/tag/v1.7.22) · [Report an issue](https://github.com/Econut/ThunderCards/issues)
 
 ![ThunderCards Unified Inbox with blue unread cards, a purple selected card, outlined account badges and the lightning banner](screenshots/01-unified-inbox.png)
 
@@ -17,7 +17,7 @@ A modern, customisable Cards View and dark theme for Mozilla Thunderbird.
 - **Cards View** puts the sender name, email address and subject on separate lines. Blue borders and green dots identify unread messages, grey borders identify read messages, and purple identifies the selection.
 - **Account badges** use editable initials and colours in Unified Folders, All Folders and combined message lists. ThunderCards detects supported accounts as you add them in Thunderbird.
 - **Quick Delete** adds a trash button beside the card menu where Thunderbird can safely move the message to Trash. After deleting a selected single message, ThunderCards prefers the next visible message, or the previous one at the end of the list.
-- **ThunderCards theme** adds the full-width blue and purple lightning header. The theme can be turned off in Settings.
+- **ThunderCards theme** adds the full-width blue and purple lightning header. The theme also darkens and centres global search over the Cards View column and softens the remote-content warning. It can be turned off in Settings.
 - **Restore Last Email on Startup** is optional and off by default. It restores the last selected read email in the main mail tab when the reading pane is visible. Unread and unavailable messages are skipped.
 
 ## Settings and menus
@@ -59,7 +59,7 @@ The right edge of each card shows the date, Quick Delete and the native three-do
 
 ## Install or upgrade
 
-1. Download the XPI from the [1.7.19 release](https://github.com/Econut/ThunderCards/releases/tag/v1.7.19).
+1. Download the XPI from the [1.7.22 release](https://github.com/Econut/ThunderCards/releases/tag/v1.7.22).
 2. In Thunderbird 160.x, open **Add-ons and Themes → Extensions**.
 3. Open the gear menu, choose **Install Add-on From File**, and select the downloaded XPI.
 4. Confirm **Add** when prompted. In the mail tab, open **Message list display options** and select **Cards View**.

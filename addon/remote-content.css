@@ -1,0 +1,8 @@
+@-moz-document url-prefix("about:message") {
+  @media (prefers-contrast: no-preference) and (forced-colors: none) {
+    notification-message[value="remoteContent"] {
+      --message-bar-background-color: light-dark(#f3e7ce, #392e20) !important;
+      --message-bar-text-color: light-dark(#503812, #f3d7a3) !important;
+    }
+  }
+}
