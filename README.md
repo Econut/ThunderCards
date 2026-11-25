@@ -4,11 +4,11 @@
 
 A modern, customisable Cards View and dark theme for Mozilla Thunderbird.
 
-**Compatibility:** Thunderbird 160.x · Tested on Windows with Thunderbird 160.0
+**Compatibility:** Thunderbird 160.x–161.x · Tested on Windows with Thunderbird 160.0 and 161.0
 
 **Features:** Customisable account badges · Optional dark theme
 
-[Download ThunderCards 1.7.24](https://github.com/Econut/ThunderCards/releases/tag/v1.7.24) · [Report an issue](https://github.com/Econut/ThunderCards/issues)
+[Download ThunderCards 1.7.25](https://github.com/Econut/ThunderCards/releases/tag/v1.7.25) · [Report an issue](https://github.com/Econut/ThunderCards/issues)
 
 ![ThunderCards Unified Inbox with blue unread cards, a purple selected card, outlined account badges and the lightning banner](screenshots/01-unified-inbox.png)
 
@@ -62,7 +62,7 @@ The right edge of each card shows the date, Quick Delete and the native three-do
 
 ## Install or upgrade
 
-1. Download the XPI from the [1.7.24 release](https://github.com/Econut/ThunderCards/releases/tag/v1.7.24).
+1. Download the XPI from the [1.7.25 release](https://github.com/Econut/ThunderCards/releases/tag/v1.7.25).
 2. In Thunderbird 160.x, open **Add-ons and Themes → Extensions**.
 3. Open the gear menu, choose **Install Add-on From File**, and select the downloaded XPI.
 4. Confirm **Add** when prompted. In the mail tab, open **Message list display options** and select **Cards View**.
@@ -71,7 +71,7 @@ The add-on keeps its existing ID for upgrades and bundles its own styles. It use
 
 ## Automatic updates
 
-Install 1.7.24 once using the XPI. Thunderbird checks the GitHub update feed for subsequent versions and installs them according to its add-on update settings. Keep automatic updates enabled in Add-ons Manager to receive them automatically.
+Install 1.7.25 once using the XPI. Thunderbird checks the GitHub update feed for subsequent versions and installs them according to its add-on update settings. Keep automatic updates enabled in Add-ons Manager to receive them automatically.
 
 ## Privacy
 
@@ -81,7 +81,7 @@ ThunderCards stores the theme toggle in local extension storage. The Thunderbird
 
 ## Known limitations
 
-ThunderCards uses a privileged Thunderbird Experiment to integrate with the folder pane, message cards, and reading pane. It relies on internal Thunderbird APIs that can change, so the manifest restricts installation to Thunderbird 160.x. Windows with Thunderbird 160.0 is the tested environment. macOS, Linux, and other Thunderbird releases are untested.
+ThunderCards uses a privileged Thunderbird Experiment to integrate with the folder pane, message cards, and reading pane. It relies on internal Thunderbird APIs that can change, so the manifest restricts installation to Thunderbird 160.x–161.x. Windows with Thunderbird 160.0 and 161.0 is the tested environment. macOS, Linux, and other Thunderbird releases are untested.
 
 Startup restoration is limited to eligible read messages in the main mail tab with the reading pane visible. Messages that moved, were deleted or are unavailable are skipped.
 

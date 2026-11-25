@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "ThunderCards",
-  "version": "1.7.24",
+  "version": "1.7.25",
   "homepage_url": "https://github.com/Econut/ThunderCards",
   "description": "Customizes Thunderbird Cards View with dark cards and separate sender name and address lines.",
   "browser_specific_settings": {
@@ -9,7 +9,7 @@
       "id": "unified-inbox-sender-lines@local.invalid",
       "update_url": "https://raw.githubusercontent.com/Econut/ThunderCards/main/updates.json",
       "strict_min_version": "160.0",
-      "strict_max_version": "160.*"
+      "strict_max_version": "161.*"
     }
   },
   "permissions": ["storage", "theme"],
@@ -27,18 +27,3 @@
     }
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
