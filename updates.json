@@ -3,15 +3,14 @@
     "unified-inbox-sender-lines@local.invalid": {
       "updates": [
         {
-          "version": "1.7.24",
-          "update_link": "https://github.com/Econut/ThunderCards/releases/download/v1.7.24/ThunderCards-1.7.24.xpi",
-          "update_hash": "sha256:e4157066efa073330d2783b14a128ca8cbcb5af656637a437c58b2e5cdd4b86a",
+          "version": "1.7.25",
+          "update_link": "https://github.com/Econut/ThunderCards/releases/download/v1.7.25/ThunderCards-1.7.25.xpi",
+          "update_hash": "sha256:7e575ab3d3725b96cce0aa70f3875c29a55805dbf517cf2c594f8c8ed10c2a38",
           "applications": {
-            "gecko": { "strict_min_version": "160.0", "strict_max_version": "160.*" }
+            "gecko": { "strict_min_version": "160.0", "strict_max_version": "161.*" }
           }
         }
       ]
     }
   }
 }
-
