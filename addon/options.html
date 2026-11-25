@@ -17,6 +17,16 @@
   <p>Reopens the last selected read email in the main mail tab when the reading pane is visible.</p>
   <p id="restore-status" role="status"></p>
   </section>
+  <section aria-labelledby="notifications-title">
+    <h2 id="notifications-title">Notifications</h2>
+    <label class="checkbox"><input id="group-notifications" type="checkbox" disabled> Group new-email notifications</label>
+    <label>Quiet period <select id="notification-delay" disabled>
+      <option value="3">3 seconds</option><option value="5">5 seconds</option>
+      <option value="10">10 seconds</option><option value="15">15 seconds</option>
+    </select></label>
+    <p>Combines new mail across accounts after a quiet period. Uses Thunderbird’s sound, desktop alert and Do Not Disturb settings.</p>
+    <p id="notification-status" role="status"></p>
+  </section>
   <section aria-labelledby="badges-title">
   <h2 id="badges-title">Account badges</h2>
   <form>

@@ -96,6 +96,25 @@ async function initRestoreEmail() {
 initRestoreEmail().catch(error => { $("restore-status").textContent = error.message; });
 
 const manifest = browser.runtime.getManifest();
+async function initGroupedNotifications() {
+  const toggle = $("group-notifications");
+  const delay = $("notification-delay");
+  const settings = await browser.senderLines.getGroupedNotifications();
+  toggle.checked = settings.enabled;
+  delay.value = String(settings.delay);
+  toggle.disabled = false;
+  delay.disabled = !toggle.checked;
+  toggle.onchange = delay.onchange = async () => {
+    try {
+      await browser.senderLines.setGroupedNotifications(toggle.checked, Number(delay.value));
+      delay.disabled = !toggle.checked;
+      $("notification-status").textContent = "";
+    } catch (error) {
+      $("notification-status").textContent = error.message;
+    }
+  };
+}
+initGroupedNotifications().catch(error => { $("notification-status").textContent = error.message; });
 $("about-version").textContent = `Version ${manifest.version}`;
 const repository = manifest.homepage_url.replace(/\/$/, "");
 for (const [id, url] of [

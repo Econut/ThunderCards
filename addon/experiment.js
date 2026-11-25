@@ -1,4 +1,4 @@
-/* global ExtensionAPI, ChromeUtils, Ci, Cu, Services */
+/* global ExtensionAPI, ChromeUtils, Cc, Ci, Cu, Services */
 const { ExtensionSupport } = ChromeUtils.importESModule(
   "resource:///modules/ExtensionSupport.sys.mjs"
 );
@@ -15,6 +15,102 @@ const { FolderTreeProperties } = ChromeUtils.importESModule(
 const BADGE_PREF = "extensions.thundercards.accountBadges";
 const RESTORE_EMAIL_PREF = "extensions.thundercards.restoreLastEmail";
 const LAST_EMAIL_PREF = "extensions.thundercards.lastEmail";
+const GROUP_PREF = "extensions.thundercards.groupNotifications";
+const GROUP_DELAY_PREF = "extensions.thundercards.notificationDelay";
+
+function groupMailNotifications() {
+  const { MailNotificationManager: manager } = ChromeUtils.importESModule(
+    "resource:///modules/MailNotificationManager.sys.mjs"
+  );
+  const { setTimeout, clearTimeout } = ChromeUtils.importESModule("resource://gre/modules/Timer.sys.mjs");
+  const original = manager._notifyNewMail;
+  const pending = new Map();
+  let timer;
+  const cancel = () => {
+    clearTimeout(timer);
+    pending.clear();
+  };
+  const flush = () => {
+    timer = null;
+    const count = [...pending.values()].reduce((total, entry) => total + entry.keys.size, 0);
+    for (const { folder, keys } of pending.values()) {
+      try {
+        manager._saveNotificationTime(folder, [...keys]);
+      } catch (error) {
+        Cu.reportError(error);
+      }
+    }
+    pending.clear();
+    if (!count || !Services.prefs.getBoolPref(GROUP_PREF, false) ||
+        manager._osIntegration?.isInDoNotDisturbMode) return;
+    if (Services.prefs.getBoolPref("mail.biff.show_alert")) {
+      try {
+        const alert = Cc["@mozilla.org/alert-notification;1"].createInstance(Ci.nsIAlertNotification);
+        alert.initWithObject({
+          name: "thundercards-grouped-mail",
+          imageURL: "chrome://branding/content/icon48.png",
+          title: "ThunderCards",
+          text: count === 1 ? "You have 1 new email." : `You have ${count} new emails.`,
+          textClickable: false,
+          silent: true,
+        });
+        Cc["@mozilla.org/system-alerts-service;1"].getService(Ci.nsIAlertsService).showAlert(alert);
+      } catch (error) {
+        Cu.reportError(error);
+      }
+    }
+    if (Services.prefs.getBoolPref("mail.biff.play_sound")) {
+      try {
+        manager.playSound(Services.prefs.getBranch("mail.biff.play_sound"));
+      } catch (error) {
+        Cu.reportError(error);
+      }
+    }
+  };
+  async function grouped(folder) {
+    if (!Services.prefs.getBoolPref(GROUP_PREF, false) || folder.server.type === "rss") {
+      return original.call(this, folder);
+    }
+    try {
+      const folders = folder.descendants;
+      folders.unshift(folder);
+      let added = false;
+      for (const candidate of folders) {
+        if (!(candidate.flags & Ci.nsMsgFolderFlags.Inbox) &&
+            candidate.flags & (Ci.nsMsgFolderFlags.SpecialUse | Ci.nsMsgFolderFlags.Virtual)) continue;
+        const keys = this._getNewMsgKeysNotNotified(candidate);
+        if (!keys.length) continue;
+        const entry = pending.get(candidate.URI) ?? { folder: candidate, keys: new Set() };
+        const known = entry.keys;
+        for (const key of keys) {
+          if (!known.has(key)) {
+            known.add(key);
+            added = true;
+          }
+        }
+        // Keep the native timestamp unchanged until the batch closes: messages
+        // arriving in the same second must still be counted in this batch.
+        pending.set(candidate.URI, entry);
+      }
+      if (added) {
+        clearTimeout(timer);
+        const delay = Services.prefs.getIntPref(GROUP_DELAY_PREF, 5);
+        timer = setTimeout(flush, ([3, 5, 10, 15].includes(delay) ? delay : 5) * 1000);
+      }
+    } catch (error) {
+      Cu.reportError(error);
+    }
+  }
+  manager._notifyNewMail = grouped;
+  Services.prefs.addObserver(GROUP_PREF, cancel);
+  Services.prefs.addObserver(GROUP_DELAY_PREF, cancel);
+  return () => {
+    cancel();
+    Services.prefs.removeObserver(GROUP_PREF, cancel);
+    Services.prefs.removeObserver(GROUP_DELAY_PREF, cancel);
+    if (manager._notifyNewMail === grouped) manager._notifyNewMail = original;
+  };
+}
 
 function rememberEmail(window, tabmail, pane) {
   const selected = () => {
@@ -515,6 +611,15 @@ this.senderLines = class extends ExtensionAPI {
       },
       restoreUnderlyingTheme: async () => this.restoreUnderlyingTheme(),
       listBadges: async () => [...this.badges.values()],
+      getGroupedNotifications: async () => ({
+        enabled: Services.prefs.getBoolPref(GROUP_PREF, false),
+        delay: Services.prefs.getIntPref(GROUP_DELAY_PREF, 5),
+      }),
+      setGroupedNotifications: async (enabled, delay) => {
+        if (![3, 5, 10, 15].includes(delay)) throw new Error("Choose a supported delay.");
+        Services.prefs.setIntPref(GROUP_DELAY_PREF, delay);
+        Services.prefs.setBoolPref(GROUP_PREF, enabled);
+      },
       getRestoreEmail: async () => Services.prefs.getBoolPref(RESTORE_EMAIL_PREF, false),
       setRestoreEmail: async enabled => {
         Services.prefs.setBoolPref(RESTORE_EMAIL_PREF, enabled);
@@ -599,6 +704,11 @@ this.senderLines = class extends ExtensionAPI {
 
   onStartup() {
     this.active = true;
+    try {
+      this.stopGroupedNotifications = groupMailNotifications();
+    } catch (error) {
+      Cu.reportError(error);
+    }
     this.startupEmailObserver = window => {
       Services.obs.removeObserver(this.startupEmailObserver, "mail-idle-startup-tasks-finished");
       this.startupEmailObserver = null;
@@ -914,6 +1024,7 @@ this.senderLines = class extends ExtensionAPI {
 
   onShutdown(isAppShutdown) {
     this.active = false;
+    this.stopGroupedNotifications?.();
     if (this.startupEmailObserver) {
       Services.obs.removeObserver(this.startupEmailObserver, "mail-idle-startup-tasks-finished");
     }

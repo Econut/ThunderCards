@@ -8,7 +8,7 @@ A modern, customisable Cards View and dark theme for Mozilla Thunderbird.
 
 **Features:** Customisable account badges · Optional dark theme
 
-[Download ThunderCards 1.7.23](https://github.com/Econut/ThunderCards/releases/tag/v1.7.23) · [Report an issue](https://github.com/Econut/ThunderCards/issues)
+[Download ThunderCards 1.7.24](https://github.com/Econut/ThunderCards/releases/tag/v1.7.24) · [Report an issue](https://github.com/Econut/ThunderCards/issues)
 
 ![ThunderCards Unified Inbox with blue unread cards, a purple selected card, outlined account badges and the lightning banner](screenshots/01-unified-inbox.png)
 
@@ -22,12 +22,15 @@ A modern, customisable Cards View and dark theme for Mozilla Thunderbird.
 
 ## Settings and menus
 
+**Grouped new-email notifications** are optional and off by default. Combine mail across accounts into one total-count notification and one configured mail sound after a 3, 5, 10 or 15-second quiet period (default 5). Thunderbird's existing sound and desktop-alert preferences and its Windows Do Not Disturb check are respected. RSS keeps its native behaviour. Turn grouping off to resume native mail notifications; original notification preferences are never changed.
+
 Click the **ThunderCards lightning icon** in the left Spaces toolbar to open Settings. You can also use **Add-ons and Themes → Extensions → ThunderCards → Preferences**. In the folder pane, right-click a supported account badge and choose **Edit account badge** to open its settings.
 
 | Section | Controls |
 | --- | --- |
 | Appearance | Enable or disable the ThunderCards theme. |
 | Startup | Turn last-email restoration on or off. |
+| Notifications | Enable grouped new-email notifications and choose the quiet period. |
 | Account badges | Select an account, edit its two-letter label and colour, preview the badge, then save or reset it. |
 | About ThunderCards | Check the installed version and open the GitHub repository or issue tracker in your default browser. |
 
@@ -59,7 +62,7 @@ The right edge of each card shows the date, Quick Delete and the native three-do
 
 ## Install or upgrade
 
-1. Download the XPI from the [1.7.23 release](https://github.com/Econut/ThunderCards/releases/tag/v1.7.23).
+1. Download the XPI from the [1.7.24 release](https://github.com/Econut/ThunderCards/releases/tag/v1.7.24).
 2. In Thunderbird 160.x, open **Add-ons and Themes → Extensions**.
 3. Open the gear menu, choose **Install Add-on From File**, and select the downloaded XPI.
 4. Confirm **Add** when prompted. In the mail tab, open **Message list display options** and select **Cards View**.
@@ -68,7 +71,7 @@ The add-on keeps its existing ID for upgrades and bundles its own styles. It use
 
 ## Automatic updates
 
-Install 1.7.23 once using the XPI. Thunderbird checks the GitHub update feed for subsequent versions and installs them according to its add-on update settings. Keep automatic updates enabled in Add-ons Manager to receive them automatically.
+Install 1.7.24 once using the XPI. Thunderbird checks the GitHub update feed for subsequent versions and installs them according to its add-on update settings. Keep automatic updates enabled in Add-ons Manager to receive them automatically.
 
 ## Privacy
 
@@ -93,6 +96,8 @@ Startup restoration is limited to eligible read messages in the main mail tab wi
 | Manual menus | Walked through Add-ons and Themes → Extensions → Install Add-on From File, confirmed the 1.7.19 XPI was added, and selected Cards View in the message-list menu. The manual install was over an existing copy. First installation and rollback were verified through the Add-on Manager API. |
 
 ## Build and rollback
+
+The [1.7.24 notification test report](docs/GROUPED-NOTIFICATIONS.md) distinguishes completed checks from untested environments. Grouping preferences are stored locally in the Thunderbird profile. Disable grouping for notification-only rollback, or disable/remove ThunderCards to restore its native notification handler. Pending batches are cancelled; native sound and alert preferences need no restoration because they were never changed.
 
 Run `./build.ps1` from the repository root in PowerShell to package `addon/` into a versioned XPI in `dist/`.
 
